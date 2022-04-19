@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "jsx": "react",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "stripInternal": true,
+    "importHelpers": true,
+    "downlevelIteration": true,
+    "strict": true,
+    "baseUrl": "./",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  },
+  "exclude": [
+    "./src/**/*.test.tsx",
+    "./src/**/*.stories.tsx"
+  ]
+}

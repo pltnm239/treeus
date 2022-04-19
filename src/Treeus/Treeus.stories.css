@@ -1,0 +1,22 @@
+/* Dark theme */
+.Treeus_dark {
+    color: white;
+
+    --list-item-focus: #393E46;
+    --list-item-hover: rgba(181, 84, 0, 0.2);
+    --list-item-icon-bg: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAA20lEQVRoge3XOQ7CMBRF0WyCCPa/E6iYGlywnEuBXWChj5N4FO9KkVLE9j9ylWlSSimllFLqbwOOwA2YW88SB8zAHTilfHzhnesJ4xHOz3ZOWbADHn7BEzhUmHPpTPu1C5thViOMDapjNiOMjaphsiGMDYtjsiOMjYthiiGMA7JjiiOMg7JhqiGMAzdjqiOMg1djmiGMARZjmiOMQZIx3SCMgX5iukOElmC6RYRSMN0jQhZmGEToG2Y4RIjPvzkXvXfz15lUdAtj3UScv5mrf8a6CaWUUkoppbrtBWnjz9Xa11cNAAAAAElFTkSuQmCC");
+}
+
+.Treeus_dark .Treeus__listItem[data-has-children='true'] > .Treeus__listItemLabel:before {
+    transform: rotate(-90deg);
+}
+
+.Treeus_dark .Treeus__listItem[data-open='true'] > .Treeus__listItemLabel:before {
+    transform: rotate(0deg);
+}
+
+/* Custom render */
+.Treeus_tennis .Treeus__listItemLabel:before {
+    width: 0;
+    background-image: none;
+}
