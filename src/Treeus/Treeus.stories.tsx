@@ -1,15 +1,14 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { Treeus } from './Treeus';
-import { ITreeusItem } from './Treeus.type';
-import { nanoid } from 'nanoid';
-import { generateSlug } from 'random-word-slugs';
+import { ITreeusProps, ITreeusItem } from './Treeus.type';
 import './Treeus.stories.css';
 
 export default {
     title: 'Treeus',
     component: Treeus,
     parameters: {
+        options: { showPanel: true },
         backgrounds: {
             default: 'default',
             values: [
@@ -27,38 +26,11 @@ export default {
     ],
 } as ComponentMeta<typeof Treeus>;
 
-const getListItem = () => ({
-    id: nanoid(),
-    label: generateSlug(1),
-    children: [
-        {
-            id: nanoid(),
-            label: generateSlug(1),
-            children: [
-                {
-                    id: nanoid(),
-                    label: generateSlug(1),
-                },
-            ],
-        },
-    ],
-});
-
-const getListItems = (count: number) => {
-    const list: ITreeusItem[] = [];
-    while (count) {
-        count -= 1;
-        list.push(getListItem());
-    }
-
-    return list;
-};
-
 const Template: ComponentStory<typeof Treeus> = (args) => <Treeus {...args} />;
 
 export const Basic = Template.bind({});
 Basic.args = {
-    items: getListItems(5),
+    items: require('./test-data/mocks/Basic.json'),
 };
 
 export const DarkTheme = Template.bind({});
@@ -66,13 +38,8 @@ DarkTheme.parameters = {
     backgrounds: { default: 'dark' },
 };
 DarkTheme.args = {
-    items: getListItems(5),
+    items: require('./test-data/mocks/DarkTheme.json'),
     className: 'Treeus_dark',
-};
-
-export const ThousandElements = Template.bind({});
-ThousandElements.args = {
-    items: getListItems(1000),
 };
 
 export const CustomRender = Template.bind({});
@@ -88,8 +55,8 @@ const getCustomRenderItems = () => {
         },
     ];
 
-    let items = getListItems(2);
-    items = items.map((item, index) => {
+    let items = require('./test-data/mocks/CustomRender.json');
+    items = items.map((item: ITreeusItem, index: number) => {
         item.label = (
             <span style={{ color: 'red' }}>
                 <img width="12px" src={tennisPlayers[index].pic} />
@@ -105,4 +72,48 @@ const getCustomRenderItems = () => {
 CustomRender.args = {
     items: getCustomRenderItems(),
     className: 'Treeus_tennis',
+};
+
+const longListStyle = {
+    width: '250px',
+    height: '570px',
+    border: '1px solid rgba(0,0,0,0.1)',
+    borderRadius: '5px',
+};
+
+export const ThousandElements = (args: ITreeusProps, { loaded: { items } }: { loaded: { items: ITreeusItem[] } }) => (
+    <div style={longListStyle}>
+        <Treeus {...args} items={items} />
+    </div>
+);
+
+ThousandElements.loaders = [
+    async () => ({
+        items: require('./test-data/mocks/ThousandElements.json'),
+    }),
+];
+ThousandElements.parameters = {
+    options: { showPanel: false },
+};
+
+export const FiftyThousandElements = (
+    args: ITreeusProps,
+    { loaded: { items } }: { loaded: { items: ITreeusItem[] } },
+) => (
+    <div style={longListStyle}>
+        <Treeus {...args} items={items} />
+    </div>
+);
+FiftyThousandElements.parameters = {
+    options: { showPanel: false },
+};
+FiftyThousandElements.loaders = [
+    async () => ({
+        items: require('./test-data/mocks/FiftyThousandElements.json'),
+    }),
+];
+
+export const DifferentNesting = Template.bind({});
+DifferentNesting.args = {
+    items: require('./test-data/mocks/DifferentNesting.json'),
 };

@@ -1,66 +1,85 @@
-import React, { MouseEvent, useState } from 'react';
-import type { ITreeusProps, ITreeusItem } from './Treeus.type';
+import React, { useState, memo, useRef, MouseEvent, useContext } from 'react';
+import { useKeys, useListOptimization, useOpenItemsIds } from './hooks';
+import type { ITreeusProps, ITreeusItem, ITreeusContext } from './Treeus.type';
 import './Treeus.css';
 
-export const TreeusItem: React.FC<ITreeusItem> = ({ id, label, children, onClick, rootState }) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const hasChildren = children && children.length > 0;
-    const onListItemClick = (event: MouseEvent, item: ITreeusItem) => {
-        if (onClick) {
-            onClick(event, item);
-        }
+const TreeusContext = React.createContext<ITreeusContext>({
+    selectedItemId: '',
+    openItemsIds: [],
+    onListItemClick: () => null,
+});
 
-        setIsOpen(!isOpen);
-    };
+const TreeusItem: React.FC<ITreeusItem> = memo(({ id, label, children }) => {
+    const { selectedItemId, openItemsIds, onListItemClick } = useContext(TreeusContext);
+    const isOpen = openItemsIds.includes(id);
+    const hasChildren = children && children.length > 0;
+    const onClickEvent = (event: MouseEvent) => onListItemClick(event, { id, label, children });
 
     return (
         <li
+            id={id}
             className="Treeus__listItem"
-            data-selected={rootState?.selectedItemId === id}
+            data-selected={selectedItemId === id}
             data-open={isOpen}
             data-has-children={hasChildren}
+            tabIndex={0}
         >
-            <label
-                className="Treeus__listItemLabel"
-                onClick={(event) => onListItemClick(event, { id, label, children })}
-            >
+            <label className="Treeus__listItemLabel" onClick={onClickEvent}>
                 {label}
             </label>
-            {hasChildren && (
-                <ul className="Treeus__list" hidden={!isOpen}>
+            {hasChildren && isOpen && (
+                <ul className="Treeus__list">
                     {children.map((ch) => (
-                        <TreeusItem {...ch} key={id} onClick={onClick} rootState={rootState} />
+                        <TreeusItem {...ch} key={ch.id} />
                     ))}
                 </ul>
             )}
         </li>
     );
-};
+});
 
-export const Treeus: React.FC<ITreeusProps> = ({ items, onClick, className }) => {
+export const Treeus: React.FC<ITreeusProps> = memo(({ items, onClick, className }) => {
     if (items?.length < 1) {
         return null;
     }
-
-    const [state, setState] = useState<ITreeusItem['rootState']>({ selectedItemId: '' });
-    const onListItemClick = (event: MouseEvent, item: ITreeusItem) => {
-        if (onClick) {
-            onClick(event, item);
-        }
-
-        setState({ selectedItemId: item.id });
-    };
 
     let rootClassNames = 'Treeus';
     if (className) {
         rootClassNames += ` ${className}`;
     }
 
-    return (
-        <ul className={rootClassNames}>
-            {items.map((item) => (
-                <TreeusItem {...item} key={item.id} onClick={onListItemClick} rootState={state} />
-            ))}
-        </ul>
+    const containerRef = useRef(null);
+    const ulRef = useRef(null);
+    const [renderItems, style] = useListOptimization(items, ulRef, containerRef);
+    const [selectedItemId, setSelectedItemId] = useState<string>('');
+    const [openItemsIds, toggleOpenItemIds, checkOpenItemId] = useOpenItemsIds([]);
+    const [handleKeyDown, list, setIndex] = useKeys(
+        items,
+        setSelectedItemId,
+        toggleOpenItemIds,
+        checkOpenItemId,
+        containerRef,
     );
-};
+
+    const onListItemClick = (event: MouseEvent, item: ITreeusItem) => {
+        setSelectedItemId(item.id);
+        toggleOpenItemIds(item.id);
+        setIndex(list.findIndex((listItem) => listItem.id === item.id));
+
+        if (onClick) {
+            onClick(event, item);
+        }
+    };
+
+    return (
+        <TreeusContext.Provider value={{ selectedItemId, openItemsIds, onListItemClick }}>
+            <div className="Treeus__container" ref={containerRef} tabIndex={-1}>
+                <ul className={rootClassNames} ref={ulRef} style={style} onKeyDown={handleKeyDown}>
+                    {renderItems.map((item) => (
+                        <TreeusItem {...item} key={item.id} />
+                    ))}
+                </ul>
+            </div>
+        </TreeusContext.Provider>
+    );
+});

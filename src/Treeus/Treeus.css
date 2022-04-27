@@ -4,24 +4,36 @@
   --list-item-icon-transition: transform 0.1s ease-out;
   --list-item-icon-bg: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAaUlEQVRIie2NMQqAMAwAb+oP3BScfVY3v2zBt7hEkKKtNqlTDgKBhDtwHEuWnq4AbEA0kEdxhfwwymFVyndgfnrQRKpyTeS1vCXyWX6NpEqkWX4yFSJqeSliJr+LmMvzSJK9C4OM4/zIAbQLGvIwlUVyAAAAAElFTkSuQmCC");
 
+  width: 100%;
   margin: 0;
   padding: 0;
   list-style-type: none;
   font-size: 14px;
+
+  box-sizing: border-box;
+}
+
+.Treeus__container {
+  position: relative;
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
 .Treeus__list {
+  width: 100%;
+  height: 100%;
   padding-left: 15px;
 }
 
 .Treeus__listItem {
+  width: 100%;
   display: block;
   list-style-type: none;
+  outline: none;
 }
 
 .Treeus__listItemLabel {
   display: block;
-  width: 100%;
   padding: 6px 12px;
   border-radius: 5px;
   cursor: pointer;
