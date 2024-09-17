@@ -1,7 +1,11 @@
 # Treeus
 Component for elements tree view
 
-### Installation and development
+### Instalation
+
+- `npm i treeus`
+
+### Development
 
 - `npm i` install dependencies
 - `npm run storybook` run Stroybook
